@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  mysql:
+    image: "mysql:8"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+    volumes:
+      - "./data/mysql/data:/var/lib/mysql"
+    networks:
+      - dont39_network
+
+  redis:
+    image: "redis:6"
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - "./data/redis/data:/data"
+    networks:
+      - dont39_network
+
+  redisinsight:
+    image: 'redislabs/redisinsight'
+    hostname: redisinsight
+    restart: always
+    user: root
+    ports:
+      - '16379:8001'
+    volumes:
+      - './data/redisinsight/data:/db'
+    networks:
+      - dont39_network
+
+  rabbitmq:
+    image: 'rabbitmq:3.8.16-management'
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: root
+      RABBITMQ_ERLANG_COOKIE: root
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - "./data/rabbitmq:/var/lib/rabbitmq"
+    networks:
+      - dont39_network
+
+networks:
+  dont39_network:
+    name: dont39_network
